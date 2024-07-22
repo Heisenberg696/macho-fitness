@@ -11,3 +11,4 @@ import reset from '../assets/icons/reset.png';
 import bgImage from '../assets/images/fitness.png';
 
 export default { profile, reset, thumbnail, cards, path, logo, logoSmall, empty, dumbell, icon, bgImage };
+    

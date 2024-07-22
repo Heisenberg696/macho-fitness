@@ -51,7 +51,7 @@ const SignIn = () => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: `Error ${error.message}`,
+        text1: `Invalid credentials`,
       });
       console.log(error.message);
     } finally {

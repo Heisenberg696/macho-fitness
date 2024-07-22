@@ -1,86 +1,15 @@
-import {
-  Text,
-  View,
-  FlatList,
-  RefreshControl,
-  Modal,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Share,
-  TouchableOpacity,
-} from 'react-native';
+import { Text, View, FlatList, Button, RefreshControl, StatusBar, StyleSheet } from 'react-native';
+import { useSharedValue } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getUserPosts } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
 import { EmptyState, VideoCard } from '../../components';
 import { useGlobalContext } from '../../context/GlobalProvider';
-import { useMemo, useState } from 'react';
-// import BottomSheet from '@gorhom/bottom-sheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useState } from 'react';
+import { BottomSheet } from '../../components/bottom-sheet';
+import Accordion from '../../components/accordion';
 
-export function BottomSheet({ isVisible, children, onClose }) {
-  const url = 'https://www.google.com';
-
-  const onShare = async () => {
-    try {
-      const result = await Share.share({
-        message: `Hey! I found this routine on Macho, check it out: ${url}`,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          console.log('Shared with activity type: ', result.activityType);
-        } else {
-          console.log('shared');
-        }
-      } else if (result.action === Share.dismissedAction) {
-        console.log('dismissed');
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  return (
-    <Modal animationType="slide" transparent={true} visible={isVisible}>
-      <View className="bg-primary shadow-lg shadow-secondary-100" style={styles.modalContent}>
-        <View className="bg-primary" style={styles.titleContainer}>
-          <Text className="text-xl font-psemibold  text-secondary-100"></Text>
-          <View className="text-xl font-psemibold w-12 rounded-xl h-2  bg-gray-300"></View>
-          <Pressable onPress={onClose}>
-            <Text>❌</Text>
-          </Pressable>
-        </View>
-        <TouchableOpacity onPress={onShare} className="flex flex-row gap-3 px-4 my-4">
-          <View>
-            <Text className="text-xl">👉</Text>
-          </View>
-          <View>
-            <Text className="text-xl font-pmedium text-secondary-100">Share routine</Text>
-          </View>
-        </TouchableOpacity>
-        <View className="flex flex-row gap-3 px-4 my-4">
-          <View>
-            <Text className="text-xl">🖊</Text>
-          </View>
-          <View>
-            <Text className="text-xl font-pmedium text-secondary-100">Edit routine </Text>
-          </View>
-        </View>
-        <View className="flex flex-row gap-3 px-4 my-4">
-          <View>
-            <Text className="text-xl">🗑</Text>
-          </View>
-          <View>
-            <Text className="text-xl font-pmedium text-secondary-100">Delete</Text>
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
-const Bookmark = () => {
+const Routine = () => {
   const { user } = useGlobalContext();
   const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
 
@@ -92,11 +21,9 @@ const Bookmark = () => {
     setRefreshing(false);
   };
 
-  // const snapPoints = useMemo(() => ['25%', '50%', '70%'], []);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const onAddSticker = () => {
+  const onOpenModal = () => {
     setIsModalVisible(true);
   };
 
@@ -104,31 +31,27 @@ const Bookmark = () => {
     setIsModalVisible(false);
   };
 
+  const open = useSharedValue(false);
+  const onPress = () => {
+    open.value = !open.value;
+  };
+
   return (
     <>
       <SafeAreaView className="px-6 my-6 bg-primary h-full">
-        {/* <GestureHandlerRootView>
-          <View style={{ flex: 1 }}>
-            <BottomSheet snapPoints={snapPoints}>
-              <View className="bg-white p-4">
-                <Text>This is awesome</Text>
-              </View>
-            </BottomSheet>
-          </View>
-        </GestureHandlerRootView> */}
-        <View style={styles.container}>
+        <View>
           <BottomSheet isVisible={isModalVisible} onClose={onModalClose} />
           <StatusBar style="auto" />
         </View>
 
         <Text className="text-2xl text-white font-psemibold">My routines</Text>
-
+        {/* <Accordion title={'My routines'} details={'fff'} /> */}
         <FlatList
           data={posts}
           keyExtractor={(item) => item.$id}
           renderItem={({ item }) => (
             <VideoCard
-              openCommand={onAddSticker}
+              openCommand={onOpenModal}
               closeCommand={onModalClose}
               title={item.title}
               thumbnail={item?.thumbnail}
@@ -146,24 +69,46 @@ const Bookmark = () => {
   );
 };
 
-export default Bookmark;
+export default Routine;
 
 const styles = StyleSheet.create({
-  modalContent: {
-    height: '35%',
-    width: '100%',
-    borderTopRightRadius: 25,
-    borderTopLeftRadius: 25,
-    position: 'absolute',
-    bottom: 0,
+  container: {
+    flex: 1,
+    justifyContent: 'center',
   },
-  titleContainer: {
-    height: '16%',
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    paddingHorizontal: 20,
+  buttonContainer: {
+    flex: 1,
+    paddingBottom: '1rem',
+    display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  parent: {
+    width: 200,
+  },
+  wrapper: {
+    width: '100%',
+    position: 'absolute',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  animatedView: {
+    width: '100%',
+    overflow: 'hidden',
+  },
+  box: {
+    height: 120,
+    width: 120,
+    color: '#f8f9ff',
+    backgroundColor: '#b58df1',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

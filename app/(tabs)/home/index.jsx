@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View, Link } from 'react-native';
 
 import { icons } from '../../../constants';
 import useAppwrite from '../../../lib/useAppwrite';
@@ -70,6 +70,8 @@ const Home = () => {
             <SearchInput />
 
             <Text className="text-lg font-pregular text-gray-100 mb-3">All Exercises</Text>
+            <Link href="/modal">Present modal</Link>
+
             {/* <Trending posts={latestPosts ?? []} /> */}
             <AllExercises />
           </View>

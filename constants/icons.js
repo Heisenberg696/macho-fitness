@@ -13,7 +13,11 @@ import eye from '../assets/icons/eye.png';
 import play from '../assets/icons/play.png';
 import notification from '../assets/icons/notification.png';
 import tracker from '../assets/icons/tracker.png';
-
+import share from '../assets/icons/share.png';
+import edit from '../assets/icons/edit.png';
+import trash from '../assets/icons/trash.png';
+import cancel from '../assets/icons/cancel.png';
+import close from '../assets/icons/close.png';
 export default {
   play,
   bookmark,
@@ -30,4 +34,8 @@ export default {
   eye,
   notification,
   tracker,
+  share,
+  edit,
+  trash,
+  close,
 };
